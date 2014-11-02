@@ -12,13 +12,20 @@ configure do
 
   set :server, 'thin'
 
-  redis_host = ENV['REDIS_PORT_6379_TCP_ADDR'] || ENV['REDIS_HOST'] || 'localhost'
-  redis_port = ENV['REDIS_PORT_6379_TCP_PORT'] || ENV['REDIS_PORT'] || 6379
-  redis_db   = ENV['REDIS_DB'] || 1
 
-  puts "Connecting to redis at #{redis_host}:#{redis_port}/#{redis_db}"
+  redis_options = {
+    host: ENV['REDIS_PORT_6379_TCP_ADDR'] || ENV['REDIS_HOST'] || 'localhost',
+    port: ENV['REDIS_PORT_6379_TCP_PORT'] || ENV['REDIS_PORT'] || 6379,
+    db: ENV['REDIS_DB'] || 1
+  }
 
-  Redis.current = Redis.new host: redis_host, port: redis_port, db: redis_db
+  if ENV['REDIS_PASSWORD']
+    redis_options[:password] = ENV['REDIS_PASSWORD']
+  end
+
+  puts "Connecting to redis at #{redis_options[:host]}:#{redis_options[:port]}/#{redis_options[:db]}"
+
+  Redis.current = Redis.new redis_options
 end
 
 helpers do
