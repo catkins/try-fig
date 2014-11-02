@@ -1,0 +1,11 @@
+redis:
+  image: redis:latest
+  ports:
+  - '6379:6379'
+
+web:
+  build: '.'
+  ports:
+  - '4567:4567'
+  links:
+  - redis
